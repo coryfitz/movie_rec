@@ -1,5 +1,6 @@
 import { Col, Container, Row, Card } from 'react-bootstrap';
 import { useState } from 'react';
+import axios from "axios";
 
 const choice1 = ['I prefer serious movies', 'I prefer lighthearted movies'];
 const choice2 = ['I prefer thinking about the future', 'I prefer thinking about the past'];
@@ -44,9 +45,10 @@ function ChoiceCard({choice, onSelect}) {
   );
 }
 
-function SubmitButton({responses}) {
+function SubmitButton({responses, apiCall}) {
   const handleSubmit = () => {
     console.log({responses});
+    apiCall();
   };
 
   return (
@@ -68,13 +70,14 @@ function SubmitButton({responses}) {
   );
 }
 
-function Output() {
+function Output({output}) {
+
   return (
     <Container style={{width: '30%', marginTop: 20}}>
         <Row className="justify-content-center">
           <Col className="text-center">
             <Card >
-              Chat GPT output will go here
+            {output['response']}
             </Card>
           </Col>
         </Row>
@@ -84,12 +87,24 @@ function Output() {
 
 function App() {
   const [responses, setResponses] = useState(['', '', '']);
+  const [output, setOutput] = useState('hello world');
 
   const handleSelect = (option, index) => {
     const newResponses = [...responses];
     newResponses[index] = option;
     setResponses(newResponses);
   };
+
+  function apiCall() {
+    axios
+      .get("/api/recommender/")
+      .then(info => info.data)
+            .then((data) => {
+                setOutput(data)
+            });
+  };
+
+  
 
   return (
     <div className="App">
@@ -102,8 +117,8 @@ function App() {
           />
         )
       })}
-      <SubmitButton responses={responses} />
-      <Output />
+      <SubmitButton responses={responses} apiCall={apiCall}/>
+      <Output output={output}/>
     </div>
   );
 }
