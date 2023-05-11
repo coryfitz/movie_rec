@@ -19,6 +19,8 @@ class RecommenderView(views.APIView):
 
     def get(self, request):
         preferences = "I prefer serious movies, I prefer thinking about the future, and I'm ok watching movies with subtitles"
+        preferences = request.POST.get('preferences')
+        print(preferences)
         yourdata= self.get_response(preferences)
         results = RecommenderSerializer(yourdata).data
         return Response(results)

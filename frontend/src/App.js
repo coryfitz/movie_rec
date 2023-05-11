@@ -48,7 +48,7 @@ function ChoiceCard({choice, onSelect}) {
 function SubmitButton({responses, apiCall}) {
   const handleSubmit = () => {
     console.log({responses});
-    apiCall();
+    apiCall(responses);
   };
 
   return (
@@ -95,7 +95,10 @@ function App() {
     setResponses(newResponses);
   };
 
-  function apiCall() {
+  function apiCall({responses}) {
+    const preferences = {'preferences': responses}
+    axios
+      .post("/api/recommender/", preferences)
     axios
       .get("/api/recommender/")
       .then(info => info.data)
@@ -103,8 +106,6 @@ function App() {
                 setOutput(data)
             });
   };
-
-  
 
   return (
     <div className="App">
