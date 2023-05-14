@@ -6,6 +6,9 @@ from .serializers import RecommenderSerializer
 
 class RecommenderView(views.APIView):
 
+    def __init__(self):
+        self.preferences = None
+
     def get_response(self, preferences):
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -17,12 +20,11 @@ class RecommenderView(views.APIView):
 
         return {'response': response['choices'][0]['message']['content']}
 
-    def get(self, request):
-        preferences = "I prefer serious movies, I prefer thinking about the future, and I'm ok watching movies with subtitles"
-        preferences = request.POST.get('preferences')
-        
-        print(preferences)
-        yourdata= self.get_response(preferences)
+    def post(self, request):
+        self.preferences = request.POST.get('preferences')
+        print(f'preferences: {self.preferences}')
+
+    def get(self):
+        yourdata= self.get_response(self.preferences)
         results = RecommenderSerializer(yourdata).data
         return Response(results)
-    
