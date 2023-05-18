@@ -47,8 +47,7 @@ function ChoiceCard({choice, onSelect}) {
 
 function SubmitButton({responses, apiCall}) {
   const handleSubmit = () => {
-    console.log({responses});
-    apiCall(responses);
+    apiCall({responses});
   };
 
   return (
@@ -88,6 +87,7 @@ function Output({output}) {
 function App() {
   const [responses, setResponses] = useState(['', '', '']);
   const [output, setOutput] = useState('hello world');
+  const [preferencesId, setPreferencesId] = useState(null);
 
   const handleSelect = (option, index) => {
     const newResponses = [...responses];
@@ -96,9 +96,11 @@ function App() {
   };
 
   function apiCall({responses}) {
-    const preferences = {'preferences': responses}
+    const preferences = {'preferences': {responses}}
+    console.log({preferences})
     axios
-      .post("/api/recommender/", preferences)
+      .post("/api/recommender/", {preferences})
+      .then(response => setPreferencesId(response.data.id));
     axios
       .get("/api/recommender/")
       .then(info => info.data)
