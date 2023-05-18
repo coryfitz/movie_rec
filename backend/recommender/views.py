@@ -14,19 +14,10 @@ class RecommenderView(views.APIView):
                     {"role": "user", "content": f"Please recommend a movie for me to watch. {preferences}"}
                 ]
         )
-
-        print(response)
-
         return {'response': response['choices'][0]['message']['content']}
 
     def post(self, request):
         preferences = request.data['preferences']['preferences']['responses']
-        self.request.session['preferences'] = preferences
-        print(self.request.session['preferences'])
-        return Response()
-
-    def get(self, request):
-        preferences = self.request.session.get('preferences') 
         yourdata= self.get_response(preferences)
         results = RecommenderSerializer(yourdata).data
         return Response(results)
