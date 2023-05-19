@@ -86,7 +86,7 @@ function Output({output}) {
 
 function App() {
   const [responses, setResponses] = useState(['', '', '']);
-  const [output, setOutput] = useState('hello world');
+  const [output, setOutput] = useState({'response': 'Your recommendation will go here'});
 
   const handleSelect = (option, index) => {
     const newResponses = [...responses];
@@ -105,7 +105,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{marginTop: 40}}>
       {choices.map((choice, i) => { 
         return (
           <ChoiceCard 
