@@ -41,8 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third Party
     'corsheaders',
     'rest_framework',
+    'dj_rest_auth',
+
     'recommender',
 ]
 
