@@ -41,11 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Third Party
     'corsheaders',
     'rest_framework',
     'dj_rest_auth',
+    'rest_framework.authtoken',
 
     'recommender',
 ]
@@ -139,3 +140,13 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 SECURE_HSTS_SECONDS = 2_592_000  # 30 days
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]    
+}
