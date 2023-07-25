@@ -1,124 +1,29 @@
-import { Col, Container, Row, Card } from 'react-bootstrap';
-import { useState } from 'react';
-import axios from "axios";
+import './App.css';
+import React, { Component } from "react";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import Home from "./Home";
+import Login from "./Login";
+import Logout from "./Logout";
+import Signup from "./Signup";
+import UserRecommender from "./UserRecommender";
 
-const choice1 = ['I prefer serious movies', 'I prefer lighthearted movies'];
-const choice2 = ['I prefer thinking about the future', 'I prefer thinking about the past'];
-const choice3 = ["I'm ok watching movies with subtitles", "I don't like watching movies with subtitles"];
-const choices = [choice1, choice2, choice3];
 
-function ChoiceCard({choice, onSelect}) {
-  const first = choice[0];
-  const second = choice[1];
-  const [selectedChoice, setSelectedChoice] = useState(null);
-
-  const handleClick = (option) => {
-    setSelectedChoice(option);
-    onSelect(option);
-  };
-
-  return (
-    <Container>
-      <Row className="justify-content-center mb-3">
-        <Col md={6} lg={4} className='text-center'>
-          <button 
-            type="button" 
-            className={'btn btn-info btn-block'} 
-            style={{backgroundColor: selectedChoice === first ? 'teal' : 'lightBlue'}}
-            onClick={() => handleClick(first)}
-          >
-            {first}
-          </button>
-        </Col>
-        <Col md={6} lg={4} className='text-center'>
-          <button 
-            type="button" 
-            className={'btn btn-info btn-block'} 
-            style={{backgroundColor: selectedChoice === second ? 'teal' : 'lightBlue'}}
-            onClick={() => handleClick(second)}
-          >
-            {second}
-          </button>
-        </Col>
-      </Row>
-    </Container>
-  );
-}
-
-function SubmitButton({responses, apiCall}) {
-  const handleSubmit = () => {
-    apiCall({responses});
-  };
-
-  return (
-    <div>
-      <Container>
-        <Row className="justify-content-center">
-          <Col className="text-center">
-            <button
-              type="button" 
-              className={'btn btn-info btn-block'}
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-}
-
-function Output({output}) {
-
-  return (
-    <Container style={{width: '30%', marginTop: 20}}>
-        <Row className="justify-content-center">
-          <Col className="text-center">
-            <Card >
-            {output['response']}
-            </Card>
-          </Col>
-        </Row>
-    </Container>
-  )
-}
-
-function App() {
-  const [responses, setResponses] = useState(['', '', '']);
-  const [output, setOutput] = useState({'response': 'Your recommendation will go here'});
-
-  const handleSelect = (option, index) => {
-    const newResponses = [...responses];
-    newResponses[index] = option;
-    setResponses(newResponses);
-  };
-
-  function apiCall({responses}) {
-    const preferences = {'preferences': {responses}}
-    axios
-      .post("/api/recommender/", {preferences})
-      .then((data) => {
-        setOutput(data.data)
-    });
-
-  };
-
-  return (
-    <div className="App" style={{marginTop: 40}}>
-      {choices.map((choice, i) => { 
-        return (
-          <ChoiceCard 
-            choice={choice} 
-            key={i} 
-            onSelect={(option) => handleSelect(option, i)}
-          />
-        )
-      })}
-      <SubmitButton responses={responses} apiCall={apiCall}/>
-      <Output output={output}/>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<Login/>} />
+            <Route path="/logout" element={<Logout/>} />
+            <Route path="/signup" element={<Signup/>} />
+            <Route path="/userrecommender" element={<UserRecommender/>} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    );
+  }
 }
 
 export default App;

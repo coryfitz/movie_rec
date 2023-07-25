@@ -1,10 +1,17 @@
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from recommender.views import *
+from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
+    path('', include('recommender.urls')),
     path('admin/', admin.site.urls),
-    path('api/recommender/', RecommenderView.as_view()),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('api/public-recommender/', PublicRecommenderView.as_view()),
+    path('api/user-recommender/', UserRecommenderView.as_view()),
+    path('token/', 
+          jwt_views.TokenObtainPairView.as_view(), 
+          name ='token_obtain_pair'),
+     path('token/refresh/', 
+          jwt_views.TokenRefreshView.as_view(), 
+          name ='token_refresh')
 ]
