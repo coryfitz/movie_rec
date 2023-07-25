@@ -6,7 +6,7 @@ function Home() {
     return (
       <div className="App">
         <Navigation />
-        <h2 style={{marginTop: 20}}>Try the movie recommender here</h2>
+        <h2 style={{marginTop: 20}}>Public Movie Recommender</h2>
         <Recommender recommender_type={'public'}/>
       </div>
     );

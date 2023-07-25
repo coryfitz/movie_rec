@@ -25,7 +25,7 @@ function Navigation() {
                     <Nav.Link href="/signup" style={{marginRight: 10}}>Signup</Nav.Link>} 
           </Nav>
           <Nav>
-          {isAuth ? <Nav.Link href="/userrecommender" style={{marginRight: 10}}>Your Recommender</Nav.Link> :  
+          {isAuth ? <Nav.Link href="/userrecommender" style={{marginRight: 10}}>Personal Recommender</Nav.Link> :  
                     ''}
           </Nav>
         </Navbar>

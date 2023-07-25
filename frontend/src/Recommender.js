@@ -83,7 +83,7 @@ function ChoiceCard({choice, onSelect}) {
 function Recommender(recommender_type) {
 
 
-    const choice1 = ['I prefer serious movies', 'I prefer lighthearted movies'];
+    const choice1 = ['I prefer relatively serious movies', 'I prefer lighthearted movies'];
     const choice2 = ['I prefer thinking about the future', 'I prefer thinking about the past'];
     const choice3 = ["I'm ok watching movies with subtitles", "I don't like watching movies with subtitles"];
     const choices = [choice1, choice2, choice3];
