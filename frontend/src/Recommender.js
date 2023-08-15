@@ -1,76 +1,104 @@
 import { Col, Container, Row, Card } from 'react-bootstrap';
 import { useState } from 'react';
 import axios from "axios";
+import { trackPromise, usePromiseTracker } from 'react-promise-tracker';
+import * as Loader from "react-loader-spinner";
 
-function ChoiceCard({choice, onSelect}) {
-    const first = choice[0];
-    const second = choice[1];
-    const [selectedChoice, setSelectedChoice] = useState(null);
+function LoadingIndicator () {
+
+  const { promiseInProgress } = usePromiseTracker();
   
-    const handleClick = (option) => {
-      setSelectedChoice(option);
-      onSelect(option);
-    };
-  
-    return (
-      <Container>
-        <Row className="justify-content-center mb-3">
-          <Col md={6} lg={4} className='text-center'>
-            <button 
-              type="button" 
-              className={'btn btn-info btn-block'} 
-              style={{backgroundColor: selectedChoice === first ? 'teal' : 'lightBlue'}}
-              onClick={() => handleClick(first)}
-            >
-              {first}
-            </button>
-          </Col>
-          <Col md={6} lg={4} className='text-center'>
-            <button 
-              type="button" 
-              className={'btn btn-info btn-block'} 
-              style={{backgroundColor: selectedChoice === second ? 'teal' : 'lightBlue'}}
-              onClick={() => handleClick(second)}
-            >
-              {second}
-            </button>
-          </Col>
-        </Row>
-      </Container>
+  return (
+    promiseInProgress && 
+    <div
+      style={{
+        width: "100%",
+        height: "100",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <Loader.ThreeDots color="teal" height="100" width="100" />
+    </div>
     );
   }
+
+function ChoiceCard({ choice, onSelect }) {
+  const first = choice[0];
+  const second = choice[1];
+  const [selectedChoice, setSelectedChoice] = useState(null);
+  const [hoveredChoice, setHoveredChoice] = useState(null);
+
+  const handleClick = (option) => {
+    setSelectedChoice(option);
+    setHoveredChoice(null);
+    onSelect(option);
+  };
+
+  const handleMouseEnter = (option) => {
+    setHoveredChoice(option);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredChoice(null);
+  };
+
+  return (
+    <Container>
+      <Row className="justify-content-center mb-3">
+        <Col md={6} lg={4} className="text-center">
+          <button
+            type="button"
+            className="btn btn btn-block"
+            style={{
+              backgroundColor:
+                selectedChoice === first
+                  ? 'teal'
+                  : hoveredChoice === first
+                  ? 'teal'
+                  : 'lightBlue',
+            }}
+            onClick={() => handleClick(first)}
+            onMouseEnter={() => handleMouseEnter(first)}
+            onMouseLeave={handleMouseLeave}
+          >
+            {first}
+          </button>
+        </Col>
+        <Col md={6} lg={4} className="text-center">
+          <button
+            type="button"
+            className="btn btn btn-block"
+            style={{
+              backgroundColor:
+                selectedChoice === second
+                  ? 'teal'
+                  : hoveredChoice === second
+                  ? 'teal'
+                  : 'lightBlue',
+            }}
+            onClick={() => handleClick(second)}
+            onMouseEnter={() => handleMouseEnter(second)}
+            onMouseLeave={handleMouseLeave}
+          >
+            {second}
+          </button>
+        </Col>
+      </Row>
+    </Container>
+  );
+}
   
-  function SubmitButton({responses, apiCall}) {
-      const handleSubmit = () => {
-        apiCall({responses});
-      };
-    
-      return (
-        <div>
-          <Container>
-            <Row className="justify-content-center">
-              <Col className="text-center">
-                <button
-                  type="button" 
-                  className={'btn btn-info btn-block'}
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </button>
-              </Col>
-            </Row>
-          </Container>
-        </div>
-      );
-    }
+
     
     function Output({output}) {
     
       return (
-        <Container style={{width: '30%', marginTop: 20}}>
+        <Container style={{width: '45%', marginTop: 10}}>
             <Row className="justify-content-center">
               <Col className="text-center">
-                <Card >
+                <Card style={{padding: 10}}>
                 {output['response']}
                 </Card>
               </Col>
@@ -82,6 +110,7 @@ function ChoiceCard({choice, onSelect}) {
 
 function Recommender(recommender_type) {
 
+  const [isLoading, setIsLoading] = useState(false);
 
     const choice1 = ['I prefer relatively serious movies', 'I prefer lighthearted movies'];
     const choice2 = ['I prefer thinking about the future', 'I prefer thinking about the past'];
@@ -96,44 +125,69 @@ function Recommender(recommender_type) {
       newResponses[index] = option;
       setResponses(newResponses);
     };
+
+    function SubmitButton({responses, apiCall}) {
+
+      const handleSubmit = () => {
+        setIsLoading(true);
+        apiCall({responses});
+      };
+    
+      return (
+        <div>
+          <Container>
+            <Row className="justify-content-center">
+              <Col className="text-center">
+                <button
+
+                  type="button" 
+                  className="btn btn"
+                  style={{ backgroundColor: isLoading ? 'teal' : 'lightBlue' }}
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      );
+    }
   
     function apiCall({responses}) {
 
       let config = null
 
-      if (recommender_type.recommender_type == 'user') {
+      if (recommender_type.recommender_type === 'user') {
       config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     }};
 
     const preferences = {'preferences': {responses}};
 
+    trackPromise(
     axios
       .post(`http://localhost:8000/api/${recommender_type.recommender_type}-recommender/`, {preferences}, config)
       .then((data) => {
-        setOutput(data.data)
-    });
+        setOutput(data.data);
+        setIsLoading(false);
+    }));
     };
 
     return (
       <div>
-
         <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             width: '100vw',
-            //height: '55vh',
-            //border: 'solid'
         }}>
         <div style={{
-            //width: '420px',
             boxShadow: "rgb(0 0 0 / 16%) 1px 3px 1px",
             paddingTop: '30px',
             paddingBottom: '20px',
             borderRadius: '8px',
             backgroundColor: 'white',
-            //border: 'solid'
         }}>
 
     {choices.map((choice, i) => { 
@@ -148,15 +202,14 @@ function Recommender(recommender_type) {
       <SubmitButton responses={responses} apiCall={apiCall}/>
       </div>
       </div>
+      <LoadingIndicator />
 
       <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             width: '100vw',
-            //height: '20vh',
-            marginTop: '30px',
-            //border: 'solid'
+            marginTop: '20px',
         }}>
       <Output output={output}/>
       </div>

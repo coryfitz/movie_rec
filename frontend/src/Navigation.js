@@ -5,6 +5,8 @@ import React, { useState, useEffect} from 'react';
 function Navigation() {
    const [isAuth, setIsAuth] = useState(false);
    useEffect(() => {
+    //console.log(JSON.parse(localStorage.getItem('access_token')));
+    //console.log(localStorage.getItem('access_token'));
      if (localStorage.getItem('access_token') !== null) {
         setIsAuth(true); 
       }

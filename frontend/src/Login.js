@@ -2,7 +2,7 @@ import axios from "axios";
 import {useState} from "react";
 import Navigation from "./Navigation";
 
-const Login = () => {
+function Login() {
      const [username, setUsername] = useState('');
      const [password, setPassword] = useState('');
 
@@ -12,7 +12,7 @@ const Login = () => {
                 username: username,
                 password: password
                };
-          // Create the POST requuest
+
           const {data} = await                                                                            
                          axios.post('http://localhost:8000/token/',
                          
@@ -21,23 +21,31 @@ const Login = () => {
                           {'Content-Type': 'application/json'},
                         withCredentials: true
      });
-
-         // Initialize the access & refresh token in localstorage.      
+    
          localStorage.clear();
-         localStorage.setItem('access_token', data.access);
-         localStorage.setItem('refresh_token', data.refresh);
-         console.log(localStorage.getItem('access_token'))
-         axios.defaults.headers.common['Authorization'] = 
-                                         `Bearer ${data['access']}`;
-         window.location.href = '/'
+
+        
+
+         try {
+
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            axios.defaults.headers.common['Authorization'] = 
+                                            `Bearer ${data['access']}`;
+            window.location.href = '/'
+         }
+
+         catch {
+          window.location.href = '/login'
+         }
     }
     return(
       <div>
         <Navigation />
-      <div className="Auth-form-container">
+      <div className="Auth-form-container" style={{marginTop: -100}}>
         <form className="Auth-form" onSubmit={submit}>
           <div className="Auth-form-content">
-            <h3 className="Auth-form-title">Sign In</h3>
+            <h3 className="Auth-form-title">Log In</h3>
             <div className="form-group mt-3">
               <label>Username</label>
               <input className="form-control mt-1" 
@@ -59,7 +67,10 @@ const Login = () => {
             </div>
             <div className="d-grid gap-2 mt-3">
               <button type="submit" 
-                 className="btn btn-primary">Submit</button>
+                      className="btn btn"
+                      style={{backgroundColor: 'lightblue'}}>
+                        Submit
+              </button>
             </div>
           </div>
        </form>

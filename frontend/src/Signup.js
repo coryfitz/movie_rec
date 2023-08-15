@@ -2,7 +2,7 @@ import axios from "axios";
 import {useState} from "react";
 import Navigation from "./Navigation";
 
-const Signup = () => {
+function Signup() {
      const [email, setEmail] = useState('');
      const [password, setPassword] = useState('');
 
@@ -12,15 +12,13 @@ const Signup = () => {
                 email: email,
                 password: password
                };
-          // Create the POST requuest
+
           const {data} = await                                                                            
                          axios.post('http://localhost:8000/api/register/',      
                          user, {headers:      
                           {'Content-Type': 'application/json'}
      });
-
-
-         // Initialize the access & refresh token in localstorage.      
+     
          localStorage.clear();
          localStorage.setItem('access_token', data.access);
          localStorage.setItem('refresh_token', data.refresh);
@@ -31,7 +29,7 @@ const Signup = () => {
     return(
       <div>
         <Navigation />
-      <div className="Auth-form-container">
+      <div className="Auth-form-container" style={{marginTop: -100}}>
         <form className="Auth-form" onSubmit={submit}>
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign up for an Account</h3>
@@ -56,7 +54,10 @@ const Signup = () => {
             </div>
             <div className="d-grid gap-2 mt-3">
               <button type="submit" 
-                 className="btn btn-primary">Submit</button>
+                      className="btn btn"
+                      style={{backgroundColor: 'lightblue'}}>
+                        Submit
+              </button>
             </div>
           </div>
        </form>
