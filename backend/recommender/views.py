@@ -38,13 +38,12 @@ class UserRecommenderView(views.APIView):
         previous_recommendations = ast.literal_eval(previous_recommendations)
         previous_recommendations = ', '.join(previous_recommendations)
 
-        prompt = f"Please recommend one movie for me to watch based on my preferences: {preferences} Please don't recommend more than one film. Don't recommend any of the following: {previous_recommendations}"
-        print(prompt)
+        prompt = f"Please recommend one movie for me to watch based on my preferences: {preferences} Please don't recommend more than one film. Don't recommend any of the following which you recommended before: {previous_recommendations}."
 
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo-16k",
             messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "system", "content": "You are a helpful assistant and a movie expert. You value giving unique movie recommendations, so you never give the same recommendations twice."},
                     {"role": "user", "content": prompt}
                 ]
         )
@@ -56,24 +55,43 @@ class UserRecommenderView(views.APIView):
             previous_recommendations = '[]'
         return previous_recommendations
     
-    def get_updated_previous_responses(self, api_response, previous_recommendations):
-        response = api_response['response']
-        recommended_movie = response.split("\"")[1]
-        if recommended_movie[-1] == '.':
-            recommended_movie = recommended_movie[:-1]
-        updated_previous_recommendations = json.loads(previous_recommendations)
-        updated_previous_recommendations.append(recommended_movie)
-        return updated_previous_recommendations
-
     def post(self, request):
         user = CustomUser.objects.get(username=request.user)
         previous_recommendations = self.get_previous_recommendations(user)
         preferences = request.data['preferences']['preferences']['responses']
+
         api_response = self.get_api_response(preferences, previous_recommendations)
-        updated_previous_recommendations = self.get_updated_previous_responses(api_response, previous_recommendations)
+        response = api_response['response']
+        recommended_movie = response.split("\"")[1]
+        if recommended_movie[-1] == '.':
+            recommended_movie = recommended_movie[:-1]
+
+        redo_count = 0
+
+        while recommended_movie in previous_recommendations and redo_count != 2:
+            redo_count += 1
+            print(f'*** Redoing API call for repeat recommendation {recommended_movie}')
+            api_response = self.get_api_response(preferences, previous_recommendations)
+            response = api_response['response']
+            recommended_movie = response.split("\"")[1]
+            if recommended_movie[-1] == '.':
+                recommended_movie = recommended_movie[:-1]
+
+        if recommended_movie in previous_recommendations:
+            print('*** Failed to get unique recommendation')
+
+        updated_previous_recommendations = json.loads(previous_recommendations)
+        updated_previous_recommendations.append(recommended_movie)
+
+        # Limit length of list to one hundred items
+        updated_previous_recommendations = updated_previous_recommendations[-100:]
+
         user.previous_recommendations = json.dumps(updated_previous_recommendations)
         user.save()
         results = RecommenderSerializer(api_response).data
+
+        results['success'] = recommended_movie not in previous_recommendations
+
         return Response(results)
     
 class LogoutView(APIView):
