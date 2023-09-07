@@ -2,7 +2,6 @@ import {useEffect} from "react";
 import axios from "axios";
 
 const Logout = () => {
-
     useEffect(() => {
         (async () => {
             try {
@@ -21,10 +20,7 @@ const Logout = () => {
             }
         })();
     }, []);
-
-    return (
-        <div></div>
-    )
-}
+    return (<div></div>)
+};
 
 export default Logout

@@ -5,18 +5,18 @@ import React, { useState, useEffect} from 'react';
 function Navigation() {
    const [isAuth, setIsAuth] = useState(false);
    useEffect(() => {
-    //console.log(JSON.parse(localStorage.getItem('access_token')));
-    //console.log(localStorage.getItem('access_token'));
      if (localStorage.getItem('access_token') !== null) {
         setIsAuth(true); 
       }
     }, [isAuth]);
-
      return ( 
       <div>
         <Navbar bg="dark" variant="dark">
           <Navbar.Brand href="/" style={{marginLeft: 10}}>Movie Recommender</Navbar.Brand>            
           <Nav className="me-auto"> 
+          </Nav>
+          <Nav>
+            <Nav.Link href="/about" style={{marginRight: 10}}>About</Nav.Link>
           </Nav>
           <Nav>
           {isAuth ? <Nav.Link href="/logout" style={{marginRight: 10}}>Logout</Nav.Link> :  
@@ -33,6 +33,6 @@ function Navigation() {
         </Navbar>
        </div>
      );
-}
+};
 
 export default Navigation

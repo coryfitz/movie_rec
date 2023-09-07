@@ -26,10 +26,12 @@ class PublicRecommenderView(views.APIView):
         return {'response': response['choices'][0]['message']['content']}
 
     def post(self, request):
-        preferences = request.data['preferences']['preferences']['responses']
-        yourdata= self.get_api_response(preferences)
-        results = RecommenderSerializer(yourdata).data
-        return Response(results)
+            preferences = request.data['preferences']['preferences']['responses']
+            yourdata= self.get_api_response(preferences)
+            results = RecommenderSerializer(yourdata).data
+            print(results)
+            return Response(results)
+  
 
 class UserRecommenderView(views.APIView):
     permission_classes = (IsAuthenticated, )

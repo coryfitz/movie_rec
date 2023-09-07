@@ -14,10 +14,9 @@ const UserRecommender = () => {
         <div className="App">
          <Navigation />
          <div style={{marginTop: 80}}>
-            <h2 style={{marginTop: 20}}>Your personal movie recommender</h2>
             <Recommender recommender_type={'user'}/>
          </div>
         </div>)
-}
+   };
 
 export default UserRecommender
