@@ -97,7 +97,7 @@ function Output({output}) {
     message = output['response']
   }
   catch {
-    message = "You've been throttled"
+    message = "Sorry - you have reached your limit for now. Please try again later."
   }
 
   let apology = null;

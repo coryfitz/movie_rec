@@ -151,29 +151,17 @@ SECURE_HSTS_SECONDS = 2_592_000  # 30 days
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        #'rest_framework.permissions.AllowAny',
-        ],
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        #'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-
     'DEFAULT_THROTTLE_CLASSES': [
-
-        'rest_framework.throttling.AnonRateThrottle',
-
-        'rest_framework.throttling.UserRateThrottle'
-
+        "rest_framework.throttling.ScopedRateThrottle"
     ],
-
     'DEFAULT_THROTTLE_RATES': {
-
-        'anon': '2/min',
-
-        'user': '4/min'
-
+        'high': '100/day',
+        'low': '11/hour'
     }
-
 }
 
 SIMPLE_JWT = {

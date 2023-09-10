@@ -15,6 +15,7 @@ from .models import CustomUser
 
 class PublicRecommenderView(views.APIView):
     permission_classes = (AllowAny, )
+    throttle_scope = 'low'
     def get_api_response(self, preferences):
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -29,12 +30,12 @@ class PublicRecommenderView(views.APIView):
             preferences = request.data['preferences']['preferences']['responses']
             yourdata= self.get_api_response(preferences)
             results = RecommenderSerializer(yourdata).data
-            print(results)
             return Response(results)
   
 
 class UserRecommenderView(views.APIView):
     permission_classes = (IsAuthenticated, )
+    throttle_scope = 'high'
 
     def get_api_response(self, preferences, previous_recommendations):
         previous_recommendations = ast.literal_eval(previous_recommendations)

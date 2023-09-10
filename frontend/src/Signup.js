@@ -3,29 +3,35 @@ import {useState} from "react";
 import Navigation from "./Navigation";
 
 function Signup() {
-     const [email, setEmail] = useState('');
-     const [password, setPassword] = useState('');
 
-     const submit = async e => {
-          e.preventDefault();
-          const user = {
-                email: email,
-                password: password
-               };
 
-          const {data} = await                                                                            
-                         axios.post('http://localhost:8000/api/register/',      
-                         user, {headers:      
-                          {'Content-Type': 'application/json'}
-     });
-     
-         localStorage.clear();
-         localStorage.setItem('access_token', data.access);
-         localStorage.setItem('refresh_token', data.refresh);
-         axios.defaults.headers.common['Authorization'] = 
-                                         `Bearer ${data['access']}`;
-         window.location.href = '/'
-    }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const submit = async e => {
+    try {
+      e.preventDefault();
+      const user = {
+            email: email,
+            password: password
+            };
+      const {data} = await                                                                            
+                      axios.post('http://localhost:8000/api/register/',      
+                      user, {headers:      
+                      {'Content-Type': 'application/json'}
+      });
+    localStorage.clear();
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+    axios.defaults.headers.common['Authorization'] = 
+                                    `Bearer ${data['access']}`;
+    window.location.href = '/'
+  }           
+  catch {
+    window.location.href = '/signup'
+  } 
+
+  }
     return(
       <div>
         <Navigation />
