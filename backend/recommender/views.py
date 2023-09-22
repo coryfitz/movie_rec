@@ -1,19 +1,17 @@
-from rest_framework import views
-from rest_framework.response import Response
-import openai
-import json
 import ast
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import generics
-from rest_framework.response import Response
-from .serializers import RecommenderSerializer, RegisterSerializer, UserSerializer
-from .models import CustomUser
+import json
 
-from rest_framework.views import exception_handler
-from rest_framework.exceptions import Throttled
+import openai
+
+from rest_framework import generics, status, views
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import CustomUser
+from .serializers import RecommenderSerializer, RegisterSerializer, UserSerializer
+
 
 class PublicRecommenderView(views.APIView):
     permission_classes = (AllowAny, )
