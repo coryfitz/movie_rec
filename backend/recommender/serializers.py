@@ -6,7 +6,6 @@ from django.contrib.auth.hashers import make_password
 class RecommenderSerializer(serializers.Serializer):
    response = serializers.CharField()
 
-# Register serializer
 class RegisterSerializer(serializers.ModelSerializer):
    class Meta:
       model = models.CustomUser
@@ -18,8 +17,7 @@ class RegisterSerializer(serializers.ModelSerializer):
    def create(self, validated_data):
       user = models.CustomUser.objects.create_user(validated_data['email'], password = validated_data['password'])
       return user
-
-# User serializer
+   
 class UserSerializer(serializers.ModelSerializer):
    class Meta:
       model = models.CustomUser

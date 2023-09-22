@@ -56,12 +56,13 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -159,9 +160,9 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle"
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'high': '100/day',
-        'low': '11/hour'
-    }
+        'high': '500/day',
+        'low': '20/hour'
+    },
 }
 
 SIMPLE_JWT = {

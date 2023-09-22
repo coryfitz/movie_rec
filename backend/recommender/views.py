@@ -5,17 +5,21 @@ import json
 import ast
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
-from .serializers import RecommenderSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from rest_framework.response import Response
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import RecommenderSerializer, RegisterSerializer, UserSerializer
 from .models import CustomUser
+
+from rest_framework.views import exception_handler
+from rest_framework.exceptions import Throttled
 
 class PublicRecommenderView(views.APIView):
     permission_classes = (AllowAny, )
+    serializer_class = RecommenderSerializer
     throttle_scope = 'low'
+
     def get_api_response(self, preferences):
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -27,7 +31,7 @@ class PublicRecommenderView(views.APIView):
         return {'response': response['choices'][0]['message']['content']}
 
     def post(self, request):
-            preferences = request.data['preferences']['preferences']['responses']
+            preferences = request.data['preferences']['responses']
             yourdata= self.get_api_response(preferences)
             results = RecommenderSerializer(yourdata).data
             return Response(results)
@@ -44,7 +48,7 @@ class UserRecommenderView(views.APIView):
         prompt = f"Please recommend one movie for me to watch based on my preferences: {preferences} Please don't recommend more than one film. Don't recommend any of the following which you recommended before: {previous_recommendations}."
 
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model="gpt-4",
             messages=[
                     {"role": "system", "content": "You are a helpful assistant and a movie expert. You value giving unique movie recommendations, so you never give the same recommendations twice."},
                     {"role": "user", "content": prompt}
@@ -61,7 +65,7 @@ class UserRecommenderView(views.APIView):
     def post(self, request):
         user = CustomUser.objects.get(username=request.user)
         previous_recommendations = self.get_previous_recommendations(user)
-        preferences = request.data['preferences']['preferences']['responses']
+        preferences = request.data['preferences']['responses']
 
         api_response = self.get_api_response(preferences, previous_recommendations)
         response = api_response['response']
@@ -98,16 +102,15 @@ class UserRecommenderView(views.APIView):
         return Response(results)
     
 class LogoutView(APIView):
-    # permission_classes = (IsAuthenticated,)
      permission_classes = (AllowAny,)
      def post(self, request):
-          #try:
+          try:
                refresh_token = request.data["refresh_token"]
                token = RefreshToken(refresh_token)
                token.blacklist()
                return Response(status=status.HTTP_205_RESET_CONTENT)
-          #except Exception as e:
-            #   return Response(status=status.HTTP_400_BAD_REQUEST)
+          except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
           
 
 class RegisterApi(generics.GenericAPIView):
@@ -118,6 +121,6 @@ class RegisterApi(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({
-            "user": UserSerializer(user,    context=self.get_serializer_context()).data,
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "message": "User Created Successfully.  Now perform Login to get your token",
         })
