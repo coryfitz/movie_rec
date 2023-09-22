@@ -1,4 +1,5 @@
 import axios from 'axios';
+import BASE_URL from './Settings';
 
 export async function refreshToken() {
     const refreshTokenValue = localStorage.getItem('refresh_token');
@@ -8,7 +9,7 @@ export async function refreshToken() {
     }
 
     try {
-        const response = await axios.post('http://localhost:8000/token/refresh/', {
+        const response = await axios.post(`${BASE_URL}token/refresh/`, {
             refresh: refreshTokenValue
         }, {
             headers: {

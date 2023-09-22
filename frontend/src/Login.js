@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import Navigation from "./Navigation";
+import BASE_URL from "./Settings";
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ function Login() {
             password: password
         };
         try {
-            const { data } = await axios.post('http://localhost:8000/token/', user, {
+            const { data } = await axios.post(`${BASE_URL}token/`, user, {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
@@ -22,7 +23,7 @@ function Login() {
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
-            window.location.href = '/';
+            window.location.href = '/userrecommender';
         } catch (error) {
             console.error("Login error:", error);
             window.location.href = '/login';

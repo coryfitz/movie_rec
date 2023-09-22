@@ -5,6 +5,7 @@ import { trackPromise } from 'react-promise-tracker';
 import LoadingIndicator from './LoadingIndicator';
 import ChoiceCard from './ChoiceCard';
 import Output from './Output';
+import BASE_URL from './Settings';
 
 function Recommender(recommender_type) {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +60,7 @@ function Recommender(recommender_type) {
 
     trackPromise(
       axios
-        .post(`http://localhost:8000/api/${recommender_type.recommender_type}-recommender/`, preferences, config)
+        .post(`${BASE_URL}api/${recommender_type.recommender_type}-recommender/`, preferences, config)
         .then(function (response) {
           setOutput(response.data);
           setIsLoading(false);

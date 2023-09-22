@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import Navigation from "./Navigation";
+import BASE_URL from "./Settings";
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ function Signup() {
         };
 
         try {
-            return axios.post('http://localhost:8000/api/register/', user, {
+            return axios.post(`${BASE_URL}api/register/`, user, {
                 headers: { 'Content-Type': 'application/json' }
             })
             .then(function(response) {
@@ -23,7 +24,7 @@ function Signup() {
                     username: email,
                     password: password
                 };
-                return axios.post('http://localhost:8000/token/', user, {
+                return axios.post(`${BASE_URL}token/`, user, {
                     headers: { 'Content-Type': 'application/json' }
                 });
             })
